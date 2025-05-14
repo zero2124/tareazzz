@@ -1,0 +1,88 @@
+
+import sys
+
+PRODUCTOS = {
+    1: ("Pan", 1000),
+    2: ("Leche", 1500),
+    3: ("Queso", 2500)
+}
+IVA = 0.19
+
+def mostrar_menu():
+    print("\n--- Menú Carrito de Compras ---")
+    print("1. Ingresar nombre de usuario")
+    print("2. Comprar productos")
+    print("3. Sacar boleta")
+    print("4. Salir")
+
+def mostrar_productos():
+    print("\nProductos disponibles:")
+    for k, v in PRODUCTOS.items():
+        print(f"{k}. {v[0]} - ${v[1]}")
+
+def ingresar_nombre():
+    nombre = input("Ingrese su nombre: ")
+    print(f"¡Hola, {nombre}!")
+    return nombre
+
+def comprar(carrito):
+    while True:
+        mostrar_productos()
+        opcion = input("Seleccione producto por número (o 's' para salir): ")
+        if opcion.lower() == 's':
+            break
+        try:
+            opcion = int(opcion)
+            if opcion in PRODUCTOS:
+                cantidad = int(input(f"Ingrese cantidad de {PRODUCTOS[opcion][0]}: "))
+                if opcion in carrito:
+                    carrito[opcion] += cantidad
+                else:
+                    carrito[opcion] = cantidad
+                print(f"{cantidad} {PRODUCTOS[opcion][0]} agregados al carrito.")
+            else:
+                print("Producto no válido.")
+        except ValueError:
+            print("Entrada no válida.")
+
+def sacar_boleta(nombre, carrito):
+    if not nombre:
+        print("Debe ingresar el nombre de usuario primero.")
+        return
+    if not carrito:
+        print("El carrito está vacío.")
+        return
+    print("\n--- BOLETA ---")
+    print(f"¡Gracias por su compra, {nombre}!")
+    total_neto = 0
+    for k, cantidad in carrito.items():
+        nombre_prod, precio = PRODUCTOS[k]
+        subtotal = precio * cantidad
+        print(f"{nombre_prod} x{cantidad} - ${subtotal}")
+        total_neto += subtotal
+    iva = int(total_neto * IVA)
+    total = total_neto + iva
+    print(f"Total Neto: ${total_neto}")
+    print(f"IVA (19%): ${iva}")
+    print(f"Total a pagar: ${total}")
+
+def main():
+    nombre = ""
+    carrito = {}
+    while True:
+        mostrar_menu()
+        opcion = input("Seleccione una opción: ")
+        if opcion == '1':
+            nombre = ingresar_nombre()
+        elif opcion == '2':
+            comprar(carrito)
+        elif opcion == '3':
+            sacar_boleta(nombre, carrito)
+        elif opcion == '4':
+            print("¡Hasta luego!")
+            sys.exit()
+        else:
+            print("Opción no válida.")
+
+if __name__ == "__main__":
+    main()
